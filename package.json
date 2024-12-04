@@ -27,12 +27,12 @@
   },
   "scripts": {
     "prepublishOnly": "pnpm build && pnpm typecheck",
-    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
+    "build": "tsup src",
     "test": "vitest",
     "lint:check": "biome check .",
     "lint:fix": "biome check . --write",
     "prepare": "husky",
-    "typecheck": "attw --pack ."
+    "typecheck": "attw --pack . --profile node16"
   },
   "keywords": ["shopify", "api", "search", "query", "builder"],
   "author": "Chris Cook",

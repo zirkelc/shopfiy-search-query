@@ -1,7 +1,7 @@
 {
-  "name": "single-package-typescript",
-  "version": "1.0.0",
-  "description": "",
+  "name": "shopify-search-query",
+  "version": "0.0.0",
+  "description": "Search query builder for Shopify's API search syntax",
   "packageManager": "pnpm@9.0.0",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
@@ -11,6 +11,18 @@
     ".": {
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
+    },
+    "./comparators": {
+      "import": "./dist/comparators.js",
+      "require": "./dist/comparators.cjs"
+    },
+    "./connectives": {
+      "import": "./dist/connectives.js",
+      "require": "./dist/connectives.cjs"
+    },
+    "./modifiers": {
+      "import": "./dist/modifiers.js",
+      "require": "./dist/modifiers.cjs"
     }
   },
   "scripts": {
@@ -22,9 +34,9 @@
     "prepare": "husky",
     "typecheck": "attw --pack ."
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["shopify", "api", "search", "query", "builder"],
+  "author": "Chris Cook",
+  "license": "MIT",
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.0",
     "@biomejs/biome": "^1.9.4",
@@ -38,6 +50,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/YOUR_REPO_NAME"
-  }
+    "url": "https://github.com/zirkelc/shopify-search-query"
+  },
+  "bugs": {
+    "url": "https://github.com/zirkelc/shopify-search-query/issues"
+  },
+  "homepage": "https://github.com/zirkelc/shopify-search-query#readme"
 }

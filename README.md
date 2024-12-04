@@ -1,90 +1,178 @@
-# TypeScript Single Package Project Template
+# Shopify Search Query Builder
 
-This template provides an opinionated setup for a single package TypeScript project.
+This library provides a search query builder for [Shopify's API search syntax](https://shopify.dev/docs/api/usage/search-syntax).
+It provides functions to programmatically build complex search queries with [connectives](https://shopify.dev/docs/api/usage/search-syntax#connectives), [comparators](https://shopify.dev/docs/api/usage/search-syntax#comparators), and [modifiers](https://shopify.dev/docs/api/usage/search-syntax#modifiers).
 
-## 🚀 Features
+## Install
 
-- 📦 [PNPM](https://pnpm.io/) for efficient package management
-- 🧹 [Biome](https://biomejs.dev/) for linting and formatting
-- 🧪 [Vitest](https://vitest.dev/) for fast, modern testing
-- 🏗️ [tsup](https://tsup.egoist.dev/) for TypeScript building and bundling
-- 🏃‍♂️ [tsx](https://tsx.is/) for running TypeScript files
-- 🐶 [Husky](https://github.com/typicode/husky) for Git hooks
-- 🔄 [GitHub Actions](.github/workflows/ci.yml) for continuous integration
-- 🐞 [VSCode](.vscode/) debug configuration and editor settings
-- 🔧 [@total-typescript/tsconfig](https://github.com/total-typescript/tsconfig) for TypeScript configuration
-- 🎯 [Are The Types Wrong?](https://github.com/arethetypeswrong/arethetypeswrong.github.io) for type validation
-- 🚀 [pkg.pr.new](https://github.com/stackblitz-labs/pkg.pr.new) for preview releases
+```bash
+npm install shopify-search-query
+```
 
-## 📋 Details
+## Examples
 
-### Package
+The following examples are taken from the [Shopify documentation](https://shopify.dev/docs/api/usage/search-syntax#search-query-syntax).
 
-The [`package.json`](package.json) is configured as ESM (`"type": "module"`), but supports dual publishing with both ESM and CJS module formats.
+```typescript
+import { buildSearchQuery, eq, and, or, not, gt, lte, prefix, exists } from 'shopify-search-query';
 
-### Biome
+/* Field search */
+buildSearchQuery(eq('first_name', 'Bob')); // first_name:Bob
+buildSearchQuery(and(eq('first_name', 'Bob'), eq('age', '27'))); // first_name:Bob AND age:27
 
-[`biome.jsonc`](biome.jsonc) contains the default [Biome configuration](https://biomejs.dev/reference/configuration/) with minimal formatting adjustments. It uses the formatter settings from the [`.editorconfig`](.editorconfig) file.
+/* Default search */
+buildSearchQuery(eq('Bob')); // Bob
+buildSearchQuery(and(eq('Bob'), eq('Norman'))); // Bob AND Norman
 
-### Vitest
+/* Range search */
+buildSearchQuery(gt('orders_count', '16')); // orders_count:>16
+buildSearchQuery(and(gt('orders_count', '16'), lte('orders_count', '30'))); // orders_count:>16 AND orders_count:<=30
 
-An empty Vitest config is provided in [`vitest.config.ts`](vitest.config.ts).
+/* NOT query */
+buildSearchQuery(not(eq('Bob'))); // NOT Bob
+buildSearchQuery(not(eq('first_name', 'Bob'))); // NOT first_name:Bob
 
-### Build and Run
+/* Boolean operators */
+buildSearchQuery(and(or(eq('bob'), eq('norman')), eq('Shopify'))); // bob OR norman AND Shopify
 
-- `tsup` builds `./src/index.ts`, outputting both ESM and CJS formats to the `dist` folder.
-- `tsx` compiles and runs TypeScript files on-the-fly.
+/* Grouping */
+buildSearchQuery(and(eq('state', 'disabled'), or([eq('sale shopper'), eq('VIP')]))); // state:disabled AND ("sale shopper" OR VIP)
 
-### Git Hooks
+/* Phrase query */
+buildSearchQuery(eq('first_name', 'Bob Norman')); // first_name:"Bob Norman"
 
-[Husky](https://github.com/typicode/husky) runs the [.husky/pre-commit](.husky/pre-commit) hook to lint staged files.
+/* Prefix query */
+buildSearchQuery(prefix('norm')); // norm*
 
-### Continuous Integration
+/* Exists query */
+buildSearchQuery(exists('published_at')); // published_at:*
+```
 
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml) defines a GitHub Actions workflow to run linting and tests on commits and pull requests.
+More examples can be found in the [tests](./test/builder.test.ts).
 
-### Preview Releases
+## Usage
 
-[pkg.pr.new](https://github.com/stackblitz-labs/pkg.pr.new) will automatically generate preview releases for every push and pull request. This allows you to test changes before publishing to npm.
+The library provides exports for the [comparators](./src/comparators.ts), [connectives](./src/connectives.ts), and [modifiers](./src/modifiers.ts).
 
-Must install GitHub App: [pkg.pr.new](https://github.com/apps/pkg-pr-new)
+### Comparators
+Shopify supports the following comparators:
 
-### VSCode Integration
+- `:`   equality
+- `<`   less-than
+- `>`   greater-than
+- `<=`  less-than-or-equal-to
+- `>=`  greater-than-or-equal-to
 
-#### Debugging
 
-[`.vscode/launch.json`](.vscode/launch.json) provides VSCode launch configurations:
-- `Debug (tsx)`: Run and debug TypeScript files
-- `Test (vitest)`: Debug tests
+```typescript
+import { eq, gt, gte, lte, lt } from 'shopify-search-query';
 
-It uses the [JavaScript Debug Terminal](https://code.visualstudio.com/docs/nodejs/nodejs-debugging) to run and debug.
+buildSearchQuery(eq('first_name', 'Bob')); // first_name:Bob
+buildSearchQuery(gt('orders_count', '16')); // orders_count:>16
+buildSearchQuery(gte('orders_count', '16')); // orders_count:>=16
+buildSearchQuery(lt('orders_count', '30')); // orders_count:<30
+buildSearchQuery(lte('orders_count', '30')); // orders_count:<=30 
+```
 
-#### Editor Settings
+If the exported functions collide with your codebase, you can use the sub-exports from `shopify-search-query/comparators`.
 
-[`.vscode/settings.json`](.vscode/settings.json) configures Biome as the formatter and enables format-on-save.
+```typescript
+import * as comparators from 'shopify-search-query/comparators';
 
-### EditorConfig
+buildSearchQuery(comparators.eq('first_name', 'Bob')); // first_name:Bob
+```
 
-[`.editorconfig`](.editorconfig) ensures consistent coding styles across different editors and IDEs:
+### Connectives
 
-- Uses spaces for indentation (2 spaces)
-- Sets UTF-8 charset
-- Ensures LF line endings
-- Trims trailing whitespace (except in Markdown files)
-- Inserts a final newline in files
+Shopify supports the following connectives:
 
-This configuration complements Biome and helps maintain a consistent code style throughout the project.
+- `AND`
+- `OR`
 
-### Type Validation
+Shopify supports a whitespace between two terms as an implicit `AND` connective. For better readability, this library always uses the explicit `AND` connective.
 
-The project includes the `@arethetypeswrong/cli` CLI tool to validate TypeScript types in your package. Run `pnpm typecheck` after building to ensure your package's types are correct and compatible with both ESM and CommonJS environments.
+```typescript
+import { and, or } from 'shopify-search-query';
 
-## 🚀 Getting Started
+buildSearchQuery(and(eq('first_name', 'Bob'), eq('age', '27'))); // first_name:Bob AND age:27
+buildSearchQuery(or(eq('first_name', 'Bob'), eq('age', '27'))); // first_name:Bob OR age:27
+```
 
-1. Create a new repository [using this template](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template)
-2. Run `pnpm install` to install dependencies
-3. Start coding in the `src` directory
-4. Run tests with `pnpm test`
-5. Build your project with `pnpm build`
+If the exported functions collide with your codebase, you can use the sub-exports from `shopify-search-query/connectives`.
 
-Happy coding! 🎉
+```typescript
+import * as connectives from 'shopify-search-query/connectives';
+
+buildSearchQuery(connectives.and(eq('first_name', 'Bob'), eq('age', '27'))); // first_name:Bob AND age:27
+```
+
+### Modifiers
+
+Shopify supports the following modifiers:
+
+- `NOT`   negation
+
+Shopify supports the alternative syntax `-` for negation. For better readability, this library always uses the explicit `NOT` syntax for negation.
+
+
+```typescript
+import { not } from 'shopify-search-query';
+
+buildSearchQuery(not(eq('Bob'))); // NOT Bob
+buildSearchQuery(not(eq('first_name', 'Bob'))); // NOT first_name:Bob
+```
+
+If the exported functions collide with your codebase, you can use the sub-exports from `shopify-search-query/modifiers`.
+
+```typescript
+import * as modifiers from 'shopify-search-query/modifiers';
+
+buildSearchQuery(modifiers.not(eq('Bob'))); // NOT Bob
+```
+
+### Default search
+
+The equality comparator (`eq`) can be used without a field to perform a default search.
+
+```typescript
+buildSearchQuery(eq('Bob')); // Bob
+```
+
+### Grouping
+
+Square brackets are used to group multiple clauses to form subqueries. The terms inside the square brackets will be surrounded with parentheses.
+
+```typescript
+// (title:"Caramel Apple") OR (inventory_total:>500 AND inventory_total:<=1000)
+buildSearchQuery(
+  or(
+    [eq('title', 'Caramel Apple')], 
+    and(
+      [gt('inventory_total', '500'), lte('inventory_total', '1000')]
+    )
+  ),
+]);
+```
+
+### Phrase query
+
+A whitespace is interpreted by Shopify as an `AND` connective, therefore values with whitespaces will always be surrounded by double quotes.
+
+```typescript
+buildSearchQuery(eq('first_name', 'Bob Norman')); // first_name:"Bob Norman"
+```
+
+### Special characters
+
+Special characters like `: \ ( )` in values will be escaped with a backslash.
+
+```typescript
+buildSearchQuery(eq('first_name', 'Bob:Norman')); // first_name:Bob\:Norman
+```
+
+Date values will be surrounded by double quotes.
+
+```typescript
+buildSearchQuery(gt('created_at', '2020-10-21')); // created_at:>"2020-10-21"
+buildSearchQuery(gt('created_at', '2020-10-21T23:39:20Z')); // created_at:>"2020-10-21T23:39:20Z"
+```

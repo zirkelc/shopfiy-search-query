@@ -1,3 +1,7 @@
+[![CI](https://github.com/zirkelc/shopify-search-query/actions/workflows/ci.yml/badge.svg)](https://github.com/zirkelc/shopify-search-query/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/shopify-search-query)](https://www.npmjs.com/package/shopify-search-query)
+[![npm](https://img.shields.io/npm/dt/shopify-search-query)](https://www.npmjs.com/package/shopify-search-query)
+
 # Shopify Search Query Builder
 
 This library provides a search query builder for [Shopify's API search syntax](https://shopify.dev/docs/api/usage/search-syntax).

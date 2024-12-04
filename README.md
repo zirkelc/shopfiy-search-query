@@ -3,6 +3,12 @@
 This library provides a search query builder for [Shopify's API search syntax](https://shopify.dev/docs/api/usage/search-syntax).
 It provides functions to programmatically build complex search queries with [connectives](https://shopify.dev/docs/api/usage/search-syntax#connectives), [comparators](https://shopify.dev/docs/api/usage/search-syntax#comparators), and [modifiers](https://shopify.dev/docs/api/usage/search-syntax#modifiers).
 
+> [!IMPORTANT]
+> This library has been tested on the official examples from the Shopify documentation.
+> If you use complex search queries, please verify if the built search query is correct.
+>
+> If you find any issues, please open an [issue](https://github.com/Shopify/shopify-search-query-builder/issues) or submit a [pull request](https://github.com/Shopify/shopify-search-query-builder/pulls).
+
 ## Install
 
 ```bash

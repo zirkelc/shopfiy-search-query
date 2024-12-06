@@ -161,7 +161,7 @@ buildSearchQuery(
       [gt('inventory_total', '500'), lte('inventory_total', '1000')]
     )
   ),
-]);
+);
 ```
 
 ### Phrase query

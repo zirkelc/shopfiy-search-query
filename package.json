@@ -1,12 +1,14 @@
 {
   "name": "shopify-search-query",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Search query builder for Shopify's API search syntax",
   "packageManager": "pnpm@9.0.0",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "type": "module",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -34,7 +36,13 @@
     "prepare": "husky",
     "typecheck": "attw --pack . --profile node16"
   },
-  "keywords": ["shopify", "api", "search", "query", "builder"],
+  "keywords": [
+    "shopify",
+    "api",
+    "search",
+    "query",
+    "builder"
+  ],
   "author": "Chris Cook",
   "license": "MIT",
   "devDependencies": {

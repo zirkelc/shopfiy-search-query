@@ -104,5 +104,8 @@ describe('buildSearchQuery', () => {
     expect(buildSearchQuery(gt('created_at', '2020-10-21T23:39:20Z'))).toBe(
       'created_at:>"2020-10-21T23:39:20Z"',
     );
+    expect(buildSearchQuery(gt('created_at', '2020-10-21T23:39:20.123Z'))).toBe(
+      'created_at:>"2020-10-21T23:39:20.123Z"',
+    );
   });
 });

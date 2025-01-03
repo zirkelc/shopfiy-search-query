@@ -1,11 +1,28 @@
 import type { Query, Term } from './types.js';
 
 /**
+ * Regex for matching dates in these format:
+ * - YYYY-MM-DD
+ * - YYYY-MM-DDThh:mm:ssZ
+ * - YYYY-MM-DDThh:mm:ss.sssZ
+ */
+const DATE_REGEX = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z)?$/;
+
+/**
+ * Regex for matching special characters that need to be escaped:
+ * - :
+ * - \
+ * - (
+ * - )
+ */
+const ESCAPE_REGEX = /([:\\()])/g;
+
+/**
  * Escapes special characters in field names.
  * Names can include the characters -, ', and " but can't start with them.
  */
 function escapeName(value: string): string {
-  return value.replace(/([:\\()])/g, '\\$1');
+  return value.replace(ESCAPE_REGEX, '\\$1');
 }
 
 /**
@@ -15,14 +32,14 @@ function escapeName(value: string): string {
  */
 function escapeValue(value: string): string {
   // Check for date formats: YYYY-MM-DD or YYYY-MM-DDThh:mm:ssZ
-  const isDate = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}Z)?$/.test(value);
+  const isDate = DATE_REGEX.test(value);
   const hasWhitespace = value.includes(' ');
 
   if (isDate || hasWhitespace) {
     return `"${value}"`;
   }
 
-  return value.replace(/([:\\()])/g, '\\$1');
+  return value.replace(ESCAPE_REGEX, '\\$1');
 }
 
 /**

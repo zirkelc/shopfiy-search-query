@@ -6,9 +6,7 @@
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "type": "module",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -36,13 +34,7 @@
     "prepare": "husky",
     "typecheck": "attw --pack . --profile node16"
   },
-  "keywords": [
-    "shopify",
-    "api",
-    "search",
-    "query",
-    "builder"
-  ],
+  "keywords": ["shopify", "api", "search", "query", "builder"],
   "author": "Chris Cook",
   "license": "MIT",
   "devDependencies": {
